@@ -1,4 +1,9 @@
+# Для ARM-процессоров раскомментировать FROM ниже, закомментировать FROM python:3.12-slim
+# FROM  arm64v8/python:3.12-slim
+
+# Для x86-процессоров раскомментировать FROM ниже, закомментировать FROM arm64v8/python:3.12-slim
 FROM python:3.12-slim
+
 LABEL author="koyote92"
 
 WORKDIR /app

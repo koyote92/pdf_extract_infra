@@ -57,7 +57,7 @@ async def process_pdf(request: Request) -> dict:
         # Здесь ПДФ-ки превращаются в .png
         extract_pages_as_png(pdf_path, output_folder, pages)
 
-        return {"status": "success", "message": "PDF processed", "folder_url": f"/static/{folder_name}"}
+        return {"status": "success", "message": "PDF processed", "folder_url": f"/{PNG_PATH_PREFIX}/{folder_name}"}
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
