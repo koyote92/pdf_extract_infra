@@ -1,4 +1,5 @@
 FROM python:3.12-slim
+LABEL author="koyote92"
 
 WORKDIR /app
 
@@ -15,6 +16,7 @@ RUN mkdir -p /app/pdfs /app/pngs
 
 COPY . /app/
 
+# Это внутренний виртуальный порт Docker Network, он не будет занимать порты из системы
 EXPOSE 10000
 
 CMD ["uvicorn", "fapi:app", "--host", "0.0.0.0", "--port", "10000"]

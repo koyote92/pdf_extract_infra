@@ -22,7 +22,7 @@ app.mount("/static", StaticFiles(directory=PNG_FOLDER, html=True), name="static"
 async def process_pdf(request: Request) -> dict:
     """
     Проверяет ссылку, кол-во страниц, соответствие формата указанных pages и конвертирует PDF-файл.
-    Возвращает JSON с ссылкой на папку с файлами.
+    Возвращает JSON с ссылкой на папку с файлами и статусом.
     """
     
     data = await request.json()
@@ -38,6 +38,8 @@ async def process_pdf(request: Request) -> dict:
     try:
         pdf_name = os.path.basename(url)
         pdf_path = os.path.join(PDF_FOLDER, pdf_name)
+
+        # Скачиваем ПДФ
         download_pdf(url, pdf_path)
 
         if pages:
@@ -51,6 +53,8 @@ async def process_pdf(request: Request) -> dict:
         output_folder = os.path.join(PNG_FOLDER, folder_name)
 
         os.makedirs(output_folder, exist_ok=True)
+
+        # Здесь ПДФ-ки превращаются в .png
         extract_pages_as_png(pdf_path, output_folder, pages)
 
         return {"status": "success", "message": "PDF processed", "folder_url": f"/static/{folder_name}"}
@@ -72,6 +76,7 @@ async def list_files(folder_name: str) -> HTMLResponse:
     files = os.listdir(folder_path)
     files = [f for f in files if os.path.isfile(os.path.join(folder_path, f))]
 
+    # Рисует простенькую HTML-структуру
     html_content = f"<h1>{folder_name}</h1><ul>"
     for file in sorted(files):
         file_url = f"/{PNG_PATH_PREFIX}/{folder_name}/{file}"
@@ -107,6 +112,7 @@ async def get_png(folder_name: str, filename: str) -> FileResponse:
     """
     Возвращает PNG файл по имени из указанной папки
     """
+
     file_path = os.path.join(PNG_FOLDER, folder_name, filename)
     if os.path.exists(file_path):
         return FileResponse(file_path)

@@ -1,7 +1,9 @@
+from http import HTTPStatus
 import os
 import subprocess
-import requests
 import zipfile
+
+import requests
 
 
 def download_pdf(url, output_path):
@@ -10,7 +12,7 @@ def download_pdf(url, output_path):
     """
 
     response = requests.get(url, stream=True)
-    if response.status_code == 200:
+    if response.status_code == HTTPStatus.OK:
         with open(output_path, 'wb') as f:
             for chunk in response.iter_content(1024):
                 f.write(chunk)
@@ -36,6 +38,7 @@ def get_pdf_page_count(input_pdf):
 def parse_pages(pages_str, max_pages):
     """
     Парсинг строки с номерами страниц и диапазонами
+    + проверка, входят ли страницы из pages в кол-во доступных страниц
     """
 
     pages = []
@@ -66,7 +69,7 @@ def parse_pages(pages_str, max_pages):
 
 def create_zip(output_folder, pdf_name):
     """
-    Создание ZIP-архива
+    Создание ZIP-архива c PNG (без сжатия)
     """
 
     pdf_output_folder = os.path.join(output_folder, pdf_name)
@@ -84,6 +87,7 @@ def create_zip(output_folder, pdf_name):
 def extract_pages_as_png(input_pdf, output_folder, pages=None):
     """
     Конвертирует страницы PDF в PNG (все страницы или указанные)
+    Для явного указания качества стоит раскомментить флаг -r
     """
 
     os.makedirs(output_folder, exist_ok=True)
